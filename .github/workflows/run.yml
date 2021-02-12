@@ -1,10 +1,6 @@
-name: sspanel签到
+name: 签到
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
   schedule:
     - cron: 0 22,14 * * *
   watch:
@@ -21,20 +17,53 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.7
+      run: |
+        pip install -r requirements.txt
     - name: 签到
       run: |
         echo -n "This IP is: " 
         curl ifconfig.me
         
-        pip install -r requirements.txt
-        
         host='${{ secrets.HOST }}'
         user='${{ secrets.USER }}'
         pwd='${{ secrets.PWD }}'
+        
+        host_list=()
+        user_list=()
+        pwd_list=()
+        
 
+        IFS="\n"
+        for h in ${host[*]}
+        do
+        host_list[${#host_list[*]}]=${h}
+        done
+
+        for u in ${user[*]}
+        do
+        user_list[${#user_list[*]}]=${u}
+        done
+
+        for p in ${pwd[*]}
+        do
+        pwd_list[${#pwd_list[*]}]=${p}
+        done
+
+        user_num=${#user_list[*]}
+        pwd_num=${#pwd_list[*]}
+
+        if [ $user_num != $pwd_num ];then
+        echo "账号和密码数量不相等"
+        exit 1
+        else
+        echo "共有 $user_num 个账号，开始签到"
+        fi
+
+        for ((i=0;i<$user_num;i++))
+        do
         python3 checkin.py <<EOF
-        ${host}
-        ${user}
-        ${pwd}
+        ${host_list[$i]}
+        ${user_list[$i]}
+        ${pwd_list[$i]}
         EOF
-
+        done
