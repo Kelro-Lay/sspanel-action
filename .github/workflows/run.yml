@@ -1,0 +1,40 @@
+name: sspanel签到
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: 0 22,14 * * *
+  watch:
+    types: started
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: 初始化Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: 签到
+      run: |
+        echo -n "This IP is: " 
+        curl ifconfig.me
+        
+        pip install -r requirements.txt
+        
+        host='${{ secrets.HOST }}'
+        user='${{ secrets.USER }}'
+        pwd='${{ secrets.PWD }}'
+
+        python3 checkin.py <<EOF
+        ${host}
+        ${user}
+        ${pwd}
+        EOF
+
