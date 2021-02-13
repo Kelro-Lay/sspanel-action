@@ -1,4 +1,4 @@
-name: 签到
+name: sspanel_签到
 
 on:
   schedule:
@@ -17,12 +17,14 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.7
+    - name: 安装依赖包
       run: |
         pip install -r requirements.txt
-    - name: 签到
+    - name: 执行签到
       run: |
         echo -n "This IP is: " 
-        curl ifconfig.me
+        curl -s ifconfig.me
+        echo ' '
         
         host='${{ secrets.HOST }}'
         user='${{ secrets.USER }}'
@@ -33,7 +35,7 @@ jobs:
         pwd_list=()
         
 
-        IFS="\n"
+        IFS=$'\n'
         for h in ${host[*]}
         do
         host_list[${#host_list[*]}]=${h}
