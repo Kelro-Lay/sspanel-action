@@ -20,7 +20,7 @@ def checkin():
         password = input('password: ')
 
     email = email.split('@')
-    print(f"登陆 {host[0:11]}....{host[-5:]}   email:{email[0][0:2]}...{email[0][-1:]}@{email[1][0:1]}...{email[1][-4:]}" )
+    print(f"登陆 {host[0:11]}....{host[-5:]}   email:{email[0][0:2]}...@...{email[1][-4:]}" )
     email = email[0] + '%40' + email[1]
 
     session = requests.session()
